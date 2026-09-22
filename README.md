@@ -34,6 +34,16 @@ JevBench/
 3. Create human-verified gold answers and release the first clean benchmark.
 4. Build paired adversarial variants and evaluate robustness.
 
+## Community evaluation references
+
+The following community resources provide existing Jev-related evaluations and are useful references when designing JevBench:
+
+- [Open-Jev — Benchmark results and scope](https://zefan-cai.github.io/open-jev/benchmarks/)
+- [Jev alternatives & benchmark — JevBench v1.3.0 | Benchmark Heaven](https://benchmarkheaven.com/jev-models)
+- [Jev benchmarks: separate author-reported workloads | jevmodel.ai](https://jevmodel.ai/benchmarks/)
+
+These are listed as **community evaluation references** for comparison and context; they are not part of the JevBench v0.1 dataset.
+
 ## Status
 
 **v0.1 — under construction.**
