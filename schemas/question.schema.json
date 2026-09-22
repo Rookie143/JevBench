@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JevBench Question",
+  "type": "object",
+  "required": ["scenario_id", "question_id", "type", "question", "gold_answer", "source"],
+  "properties": {
+    "scenario_id": {"type": "string"},
+    "question_id": {"type": "string"},
+    "category": {"type": ["string", "null"]},
+    "state": {"type": "string"},
+    "type": {"enum": ["noul", "choice", "score"]},
+    "question": {"type": "string"},
+    "options": {
+      "type": ["array", "null"],
+      "items": {"type": "string"}
+    },
+    "score_rubric": {"type": ["object", "null"]},
+    "gold_answer": {},
+    "gold_rationale": {"type": ["string", "null"]},
+    "annotator_1": {},
+    "annotator_2": {},
+    "adjudicated": {"type": "boolean"},
+    "annotation_status": {
+      "enum": ["unlabeled", "provisional", "verified", "ambiguous", "needs_review"]
+    },
+    "source": {"type": "string"},
+    "jev_baseline_answer": {}
+  },
+  "additionalProperties": true
+}
