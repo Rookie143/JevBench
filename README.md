@@ -1,5 +1,6 @@
 # JevBench
 
+beta1.0是干净数据库，ADbeta是我们做的对抗数据，均在data文件夹下
 [beta1.0 / ADbeta1.0 ](releases/beta1.0-20260925/README.md)
 
 已上传完整 beta1.0（812 题）、ADbeta1.0（9,744 候选）、英文 Prompt [结果报告](releases/beta1.0-20260925/results/report.md) 和 [汇总 JSON](releases/beta1.0-20260925/results/summary.json)。
