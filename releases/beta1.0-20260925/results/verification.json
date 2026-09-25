@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "request_hashes_and_strict_scores_verified": 10556,
+  "original_records_and_label_provenance_unchanged": true,
+  "unique_output_items": 10556,
+  "failed_requests": 0,
+  "dataset_sha256": "da0c2e9b7b0e4c263480f91a21e186bb1f202e727a14b5138b3de219f906dc1a"
+}

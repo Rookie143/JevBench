@@ -1,5 +1,15 @@
 # JevBench
 
+## 当前完整数据与实验（2026-09-25）
+
+**老师阅读入口：[beta1.0 / ADbeta1.0 完整交接包](releases/beta1.0-20260925/README.md)**。
+
+已上传完整 beta1.0（812 题）、ADbeta1.0（9,744 候选）、本轮全部 10,556 条 API 请求记录与结果、历史原题基线和标签审核证据、当前 Prompt、框架表及代码。大文件使用可校验压缩分卷；入口提供两条离线恢复/复算命令。可直接读 [结果报告](releases/beta1.0-20260925/results/report.md) 和 [汇总 JSON](releases/beta1.0-20260925/results/summary.json)。
+
+标签来源是 143 human_review 与 669 jev_default，并非全部人工独立金标准。当前候选语义审核 pending；总偏离率不是已验证攻击成功率。S3/T 已改为明显非权威的主观看法；细节见 [当前规范](releases/beta1.0-20260925/spec/扰动生成prompt-en.md)。
+
+下方为建库计划与原始设计目标，实际交付数量、标签来源和方法版本以上述 release 为准。
+
 JevBench is a benchmark for evaluating the **clean performance and adversarial robustness of Jev-style typed decision models**.
 
 ## Scope
@@ -46,6 +56,6 @@ These are listed as **community evaluation references** for comparison and conte
 
 ## Status
 
-**v0.1 — under construction.**
+**beta1.0 数据与完整评测快照已交付；独立语义审核和后续基准完善继续进行。**
 
 This repository is currently private while the first benchmark release is being prepared.

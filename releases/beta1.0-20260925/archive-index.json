@@ -1,0 +1,66 @@
+{
+  "archive": "evidence.tar.xz",
+  "archive_sha256": "a1f4f34698fe5986267d2eddb5980f739f4c41fef7b38a84a0f00c0a03481261",
+  "archive_bytes": 2612912,
+  "parts": [
+    {
+      "file": "evidence.tar.xz.part001",
+      "bytes": 245760,
+      "sha256": "6f7280ca1dfcc81e889044f893be445cb8a345c4a48a208d36f6420cd2accd6a"
+    },
+    {
+      "file": "evidence.tar.xz.part002",
+      "bytes": 245760,
+      "sha256": "cd51e1908ca5e7ede1859061516c06c4f1a1333fe36345f0bc594031b763a761"
+    },
+    {
+      "file": "evidence.tar.xz.part003",
+      "bytes": 245760,
+      "sha256": "dec06a5b2e2c62b76325859c14eb849e19b54c5e994e65c2497e0043ab1e30ba"
+    },
+    {
+      "file": "evidence.tar.xz.part004",
+      "bytes": 245760,
+      "sha256": "75416306a24a2c2bf58aa40779027bda419c4db6024e84e06a3f58ac73f2db47"
+    },
+    {
+      "file": "evidence.tar.xz.part005",
+      "bytes": 245760,
+      "sha256": "564ea097d88952ce3861199c29cceafc64b09322e06f873735bff3d649618a91"
+    },
+    {
+      "file": "evidence.tar.xz.part006",
+      "bytes": 245760,
+      "sha256": "b16e734b5ba09f6b666d9b8af149f3ffb2cc960465c698c60821c3fc6ab183b8"
+    },
+    {
+      "file": "evidence.tar.xz.part007",
+      "bytes": 245760,
+      "sha256": "be50ff25de3894683bb661dc599f20ea1975595720794cfcb3f202d4b507832c"
+    },
+    {
+      "file": "evidence.tar.xz.part008",
+      "bytes": 245760,
+      "sha256": "680d849c23b8dd2b8b9b545dbb2d3d15f1f217be8302ad6d1603e2573e3a5fb6"
+    },
+    {
+      "file": "evidence.tar.xz.part009",
+      "bytes": 245760,
+      "sha256": "a121bfca6f86ad0410be6e9251e17635815afd55662f64b2eacde5703068b2f7"
+    },
+    {
+      "file": "evidence.tar.xz.part010",
+      "bytes": 245760,
+      "sha256": "99661e3add9cc764ee6533b50ff120b0fc58e96d8a463ccfb1f31dd8d0cf0965"
+    },
+    {
+      "file": "evidence.tar.xz.part011",
+      "bytes": 155312,
+      "sha256": "81caa82174ed7f5a8bd3b0303adf0699d566f6916e27290e49f5216e88ae3fa2"
+    }
+  ],
+  "file_count": 10918,
+  "current_response_count": 10556,
+  "historical_baseline_response_count": 330,
+  "run_source": "ADbeta1.0-current-20260925-100059"
+}
