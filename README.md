@@ -1,16 +1,12 @@
 # JevBench
 
-## 当前完整数据与实验（2026-09-25）
+[beta1.0 / ADbeta1.0 ](releases/beta1.0-20260925/README.md)**。
 
-**老师阅读入口：[beta1.0 / ADbeta1.0 完整交接包](releases/beta1.0-20260925/README.md)**。
+已上传完整 beta1.0（812 题）、ADbeta1.0（9,744 候选）、英文 Prompt [结果报告](releases/beta1.0-20260925/results/report.md) 和 [汇总 JSON](releases/beta1.0-20260925/results/summary.json)。
 
-已上传完整 beta1.0（812 题）、ADbeta1.0（9,744 候选）、修正后本轮 10,556 条 API 请求记录与结果及 812 条相同原题重复对照、历史原题基线和标签审核证据、最终英文 Prompt、恢复为外层备注的 S3 框架及修正后代码。大文件使用可校验压缩分卷；入口提供两条离线恢复/复算命令。可直接读 [结果报告](releases/beta1.0-20260925/results/report.md) 和 [汇总 JSON](releases/beta1.0-20260925/results/summary.json)。
+对抗错误率 16.86%，原题错误率 9.98%。
 
-本轮对抗严格错误率 16.86%，原题错误率 9.98%。Q1/Q2 已修正，T3 加入具体假设案例；S3 保持外层非权威备注，字段暴露限制见报告。
-
-标签来源是 143 human_review 与 669 jev_default，并非全部人工独立金标准。当前候选语义审核 pending；总偏离率不是已验证攻击成功率。S3/T 已改为明显非权威的主观看法；细节见 [当前规范](releases/beta1.0-20260925/spec/扰动生成prompt-en.md)。
-
-下方为建库计划与原始设计目标，实际交付数量、标签来源和方法版本以上述 release 为准。
+[当前规范](releases/beta1.0-20260925/spec/扰动生成prompt-en.md)。
 
 JevBench is a benchmark for evaluating the **clean performance and adversarial robustness of Jev-style typed decision models**.
 
