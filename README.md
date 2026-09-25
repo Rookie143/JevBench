@@ -6,7 +6,7 @@
 
 对抗错误率 16.86%，原题错误率 9.98%。
 
-[当前规范](releases/beta1.0-20260925/spec/扰动生成prompt-en.md)。
+[生成prompt内容](releases/beta1.0-20260925/spec/扰动生成prompt-en.md)。
 
 JevBench is a benchmark for evaluating the **clean performance and adversarial robustness of Jev-style typed decision models**.
 
