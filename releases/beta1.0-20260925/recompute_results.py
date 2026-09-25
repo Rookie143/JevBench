@@ -15,3 +15,14 @@ for cat,v in counts.items():
  old=expected['clean'] if cat=='clean' else expected['by_category'][cat]
  assert v['answered']==old['answered'] and v['errors']==old['strict_errors']
 print(json.dumps({'verified_requests':n,'dataset_sha256':sha,'counts':counts},indent=2))
+
+repeat_count=0
+for item in items:
+ if item['category']!='clean':continue
+ name='job-'+item['item_id']+'.json'
+ original=json.loads((root/'eval/responses'/name).read_text())
+ repeated=json.loads((root/'clean-repeat/responses'/name).read_text())
+ assert repeated['status']=='ok' and repeated['body_sha256']==original['body_sha256']
+ b.score(item,repeated['answers'][item['item_id']]);repeat_count+=1
+assert repeat_count==812
+print(json.dumps({'identical_repeat_requests_verified':repeat_count}))

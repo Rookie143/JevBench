@@ -5,9 +5,9 @@ from pathlib import Path
 import aiohttp
 import eval_adbeta_jev as base
 
-RUN = Path(json.loads((base.HERE/'exports/current-attack-run.json').read_text())['run_dir'])
+RUN = Path(json.loads((base.HERE/'exports/corrected-attack-run.json').read_text())['run_dir'])
 base.SOURCE = RUN/'ADbeta1.0.json'
-OUT = RUN/'eval'
+OUT = RUN/'clean-repeat'
 base.OUT = OUT
 base.RESPONSES = OUT / 'responses'
 BATCH = 1000
@@ -25,6 +25,7 @@ async def main():
             jobs.append(dict(job_id='job-'+item[0], scenario_id=sid, state_hash=sh,
                              state=group['state'], items=[item]))
     jobs.sort(key=lambda j: (byid[j['items'][0][0]]['category']=='clean', int(j['items'][0][0][1:])))
+    jobs = [j for j in jobs if byid[j['items'][0][0]]['category']=='clean']
     manifest = dict(dataset='ADbeta1.0',source_sha256=sha,model=base.MODEL,
                     endpoint=base.ENDPOINT,concurrency=1000,wave_size=1000,
                     questions_per_request=1,items=items,
@@ -103,12 +104,7 @@ async def main():
             base.atomic_json(OUT/f'wave-{number:02}.json',progress)
             print(json.dumps(progress),flush=True)
             if stop: break
-    import report_current_attacks
-    summary=report_current_attacks.summarize(base,items,jobs,OUT)
-    summary['execution']=dict(config,finished_at=now(),peak_concurrent_requests=peak,stats=dict(stats))
-    base.atomic_json(OUT/'summary.json',summary)
-    report=OUT/'report.md'
-    report.write_text(report.read_text()+f'\n执行配置：每批 1000 个异步 HTTP 请求，每请求一道题；观察到的峰值并发 {peak}。本次累计调用统计：{json.dumps(dict(stats),ensure_ascii=False)}。\n')
-    print(json.dumps(dict(event='finished',complete=summary['complete'],stats=dict(stats),overall=summary['overall_adversarial'])),flush=True)
+    base.atomic_json(OUT/'execution.json',dict(config,finished_at=now(),peak_concurrent_requests=peak,stats=dict(stats)))
+    print(json.dumps(dict(event='repeat_finished',stats=dict(stats))),flush=True)
 
 if __name__=='__main__': asyncio.run(main())

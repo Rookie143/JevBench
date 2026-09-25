@@ -3,8 +3,8 @@
   "structural_candidates": 9744,
   "independent_semantic_review": "pending",
   "source_sha256": "62d9e567f3f167809050f287b283a02c1e43f86267342a49a5c5a6e915c97c12",
-  "dataset_sha256": "da0c2e9b7b0e4c263480f91a21e186bb1f202e727a14b5138b3de219f906dc1a",
+  "dataset_sha256": "2a6b178193984d0a3155a7728e511cc75e56225f05fd506c616da9cc5d00fc12",
   "prompt_sha256": "c56e15611fe08ab46d19a3d53a9e0dbf9f39fa6cf92c0355601310f107222328",
-  "seed": 13963300866143434252,
-  "run_dir": "/Users/hujianyi/Desktop/科研/JevSafety/research/ref1.2/exports/ADbeta1.0-current-20260925-100059"
+  "seed": 13148951521266908159,
+  "run_dir": "/Users/hujianyi/Desktop/科研/JevSafety/research/ref1.2/exports/ADbeta1.0-corrected-20260925-103949"
 }

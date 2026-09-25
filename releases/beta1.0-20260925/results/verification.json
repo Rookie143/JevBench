@@ -1,8 +1,10 @@
 {
   "passed": true,
   "request_hashes_and_strict_scores_verified": 10556,
+  "identical_clean_repeat_request_hashes_verified": 812,
   "original_records_and_label_provenance_unchanged": true,
   "unique_output_items": 10556,
   "failed_requests": 0,
-  "dataset_sha256": "da0c2e9b7b0e4c263480f91a21e186bb1f202e727a14b5138b3de219f906dc1a"
+  "dataset_sha256": "2a6b178193984d0a3155a7728e511cc75e56225f05fd506c616da9cc5d00fc12",
+  "prompt_sha256": "c56e15611fe08ab46d19a3d53a9e0dbf9f39fa6cf92c0355601310f107222328"
 }

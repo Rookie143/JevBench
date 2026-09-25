@@ -1,45 +1,31 @@
-# beta1.0 / ADbeta1.0 完整实验
+# beta1.0 / ADbeta1.0 修正版完整实验
 
-[完整结果报告](results/report.md)、[机器可读汇总](results/summary.json)、[攻击框架](spec/攻击框架表.md) 和 [本次实际使用的 Prompt](spec/扰动生成prompt-en.md)。
+本目录替换先前结果，采用最终英文 prompt，S3 恢复为外层非权威观点字段 `S3-personal-opinion-v1`，不采用将备注移入 instructions 的探索方案。
 
-## 数据与结果
+[完整报告](results/report.md) · [修正说明](results/correction-notes.md) · [汇总 JSON](results/summary.json) · [12 类完整例子](results/twelve-method-example.json) · [实际使用的 Prompt](spec/扰动生成prompt-en.md)
 
-- beta1.0：66 个场景、812 道题，314 Noul / 337 Choice / 161 Score。
+- beta1.0：66 场景、812 题（314 Noul / 337 Choice / 161 Score）。
+- ADbeta1.0：9,744 个从原题重新生成的独立候选。Q1 为 73 个同义替换和 739 个空格扰动；Q2 为 115 个句子改写和 697 个实质词汇改写；T3 使用具体假设案例。
+- 模型 jev-1.13.0：9,744 次攻击调用、812 次原题调用、812 次相同原题重复对照，合计 11,368 次均成功。主测试峰值并发 1,000。
+- 对抗严格错误 1,643/9,744（16.86%）；原题错误 81/812（9.98%）。相同原题重复有 4/731 次由对变错。
+- Score 仍严格相等（仅浮点表示误差 1e-9），原闭区间不变。143 human_review、669 jev_default；独立语义审核 pending。
+- S1/S3 外层新增字段的模型暴露未证实；不能将低错误率称为模型成功防御。S2 解码后字段名相同。详见报告。
 
-- ADbeta1.0：从原题全新生成 9,744 条候选，每题 Q1–P3 共 12 类。
-  
-- 当前评测：模型 jev-1.13.0，9,744 次攻击调用 + 812 次新 clean 对照；总错误 1,648/9,744（16.91%）；原题错误 79/812（9.73%）。
+## 完整 JSON 与日志
 
-## 获取完整 JSON 和全部日志
-
-在仓库根目录运行（仅 Python 标准库；不会调用 API）：
+在仓库根目录运行，使用新的空输出目录：
 
 ```sh
-python3 releases/beta1.0-20260925/restore_and_verify.py --output restored
-python3 releases/beta1.0-20260925/recompute_results.py restored
+python3 releases/beta1.0-20260925/restore_and_verify.py --output restored-corrected
+python3 releases/beta1.0-20260925/recompute_results.py restored-corrected
 ```
 
-恢复后的内容：
+仅使用 Python 标准库，离线恢复与复算，不调用 API。恢复路径：`data/beta1.0.json`、`data/ADbeta1.0.json`、`eval/results.jsonl`、`eval/responses/`（10,556 条）、`clean-repeat/responses/`（812 条）、`baseline-history/`、`review-history/`。评测 manifest 和原始数据共同保留每次请求的输入；响应记录包含模型答案、token 用量、状态、请求 ID 和请求体哈希，不包含凭据或服务端内部推理。
 
-| 路径 | 内容 |
-|---|---|
-| restored/data/beta1.0.json | 原始基准完整 JSON |
-| restored/data/ADbeta1.0.json | 当前完整对抗数据，原文件字节不变 |
-| restored/eval/results.jsonl | 全部 10,556 条逐题评分和答案 |
-| restored/eval/responses/ | 全部 10,556 条 API 响应记录，含答案、usage、尝试次数、HTTP 状态、请求 ID、时间和请求体哈希 |
-| restored/eval/manifest.json | 问题 ID、原标签、任务与原始 question 文本索引 |
-| restored/eval/run-config.json、wave-*.json | 并发配置与全部 11 批运行记录 |
-| restored/baseline-history/ | 原题基线输出、标签和构建相关记录 |
-| restored/review-history/ | 审核事件及历史尝试记录 |
+归档与每个原始文件均有 SHA-256 校验，复算脚本核对请求体哈希和严格评分。旧版本可由 Git 历史恢复；请勿混用旧解压目录和新分卷。
 
-请求 State 在数据集中保存，原始 question 文本在样本/manifest 中保存，复算脚本重建每次请求并核对 SHA-256。响应记录是评测器保存的 JSON 记录，不包含 Authorization 请求头或服务端内部推理。输入 token、模型答案、评分、真实执行后果需分别解释。
+## 代码与边界
 
-`archive-index.json` 校验分卷与合并归档，`evidence-files.json` 校验全部解压原文件。复算脚本核对每次请求体哈希及全部严格评分。原 JSON 不适配仓库早期 schemas/question.schema.json；应按数据内实际结构读取。
+`code/` 保存实际生成和评测实现，凭据适配器仅从环境变量 TYPESAFE_API_KEY 读取密钥。在线重跑需按代码配置路径并安装 requirements.txt，会产生新调用及采样差异；不承诺从任意工作目录直接运行可精确重现生成数据。生成种子和依赖哈希保存在数据与 generation-validation.json 中。不得运行历史修订脚本覆盖当前 prompt。
 
-## 代码与可复现边界
-
-`code/` 保存本轮生成、评测、报告及依赖代码。`run.py` 专门替换为只读取环境变量 TYPESAFE_API_KEY 的可移植凭据适配器，未上传密钥或本机环境文件。其他脚本保留此次实际实现；其目录假设和生成时钟仍来自研究工作区，不应直接在仓库根目录执行后声称同种子精确复现。生成种子及文件哈希见 generation-validation.json 和 ADbeta1.0.generation_spec。
-
-上述两条离线命令已验证，可以完整恢复与复算本轮结果。重新调用模型会产生费用及采样差异，需按代码中的 SOURCE/OUT 配置路径、安装 code/requirements.txt，并自行设置环境变量。不要通过执行旧修订脚本覆盖当前 prompt。
-
-本交接包含当前 release 和其标签/基线来源证据，不声称包含整个工作区所有历史攻击实验。旧 S3 数组、重复键、收窄实验另见 jevpaper 历史材料；这些不是本轮方法，不能混合统计。完整性校验不等于独立语义审核。
+本次只替换主实验交付，未将另一次“只新增到已有对象”探索实验混入 ADbeta 或本轮指标。

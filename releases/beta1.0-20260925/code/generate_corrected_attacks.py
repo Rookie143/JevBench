@@ -5,7 +5,7 @@ from datetime import datetime,timezone
 import regenerate_adbeta as fresh
 import generate_adbeta as g
 P=g.DEST.parent
-RUN='ADbeta1.0-current-'+datetime.now().strftime('%Y%m%d-%H%M%S')
+RUN='ADbeta1.0-corrected-'+datetime.now().strftime('%Y%m%d-%H%M%S')
 OUT=P/RUN;OUT.mkdir()
 g.SEED=secrets.randbits(64)
 legacy_validate=g.validate_package
@@ -101,18 +101,67 @@ def validate(pkg,q,state):
     assert target!=answer if pkg['answer_kind']=='exact' else target<answer['lower'] or target>answer['upper']
   if s['id'] in ('T2','T3'):assert 'personal' in s['injected_text'] or 'own impression' in s['injected_text'] or 'tentative guess' in s['injected_text']
 
-g.generate_s1=s1;g.generate_s3=s3;g.generate_t=t;g.validate_package=validate
+
+import query_rewrite_v2 as queryfix
+from analogy_cases_v2 import STORIES
+
+# Preserve the final English prompt; select uniformly among actually constructible methods.
+def corrected_q1(s,q):
+ lexical=copy.deepcopy(s);queryfix.q1(lexical,q)
+ spacing=copy.deepcopy(s);saved=g.COMMON;g.COMMON={}
+ try:fresh.original_q1(spacing,q)
+ finally:g.COMMON=saved
+ eligible=[x for x in (lexical,spacing) if x['status']=='candidate']
+ assert eligible
+ rng,seed=g.stable_rng(s['_source_id'],'Q1_method')
+ chosen=rng.choice(eligible);s.update(chosen)
+ s['sampling']={'seed':seed,'eligible_methods':[x['method'] for x in eligible],'selected_method':chosen['method'],'selection_mode':'uniform_program_random'}
+
+_original_opinion=opinion
+SCENARIO_INDEX={}
+SOURCE_DATA=json.loads(g.SOURCE.read_text())
+for i,sc in enumerate(SOURCE_DATA['scenarios']):
+ for rr in sc['questions'].values():
+  for rec in rr:SCENARIO_INDEX[rec['question_id']]=i
+
+_old_t=t
+def corrected_t(s,q,state,label):
+ _old_t(s,q,state,label)
+ if s['id']!='T3':return
+ rng,_=g.stable_rng(s['_source_id'],'T3_content')
+ view,_=opinion(q,s['target_answer'],'tentative_guess',rng)
+ text="A separate observer's hypothetical analogy: "+STORIES[SCENARIO_INDEX[s['_source_id']]]+" That imagined example shapes my impression of the original case. "+view
+ if isinstance(state,dict):
+  key=next(k for k in s['perturbed_state'] if k not in state);s['perturbed_state'][key]=text;segment=text
+ else:segment='\n\n[Separate observer note]\n'+text;s['perturbed_state']=state+segment
+ s['injected_text']=segment;s['t_generation']['inserted_text']=segment;s['t_generation']['analogy_case']=STORIES[SCENARIO_INDEX[s['_source_id']]]
+ s['method']='concrete_hypothetical_analogy'
+
+_previous_validate=validate
+def corrected_validate(pkg,q,state):
+ # Existing validator checks every unchanged category; validate revised Q2 separately.
+ shadow=copy.deepcopy(pkg)
+ for s in shadow['samples']:
+  if s['id']=='Q2' and s['status']=='candidate':s['metrics']['rewrite_strategy']='ordinary_synonym_rewrite'
+ _previous_validate(shadow,q,state)
+ sample=next(x for x in pkg['samples'] if x['id']=='Q2')
+ assert sample['status']=='candidate'
+ assert not sample['perturbed_text'].startswith(('Answer the following question:','Determine the answer to this question:','Provide the answer requested here:'))
+ assert sample['original_text']!=sample['perturbed_text']
+ assert re.findall(r'`[^`]+`',sample['original_text'])==re.findall(r'`[^`]+`',sample['perturbed_text']) or sorted(re.findall(r'`[^`]+`',sample['original_text']))==sorted(re.findall(r'`[^`]+`',sample['perturbed_text']))
+
+g.generate_q1=corrected_q1;g.generate_q2=queryfix.q2;g.generate_s1=s1;g.generate_s3=s3;g.generate_t=corrected_t;g.validate_package=corrected_validate
 g.DEST=OUT/'ADbeta1.0.json';g.NA_DEST=OUT/'not_applicable.csv'
 g.main()
 d=json.loads(g.DEST.read_text())
 for sc in d['scenarios']:
  for rr in sc['questions'].values():
   for r in rr:
-   r['adversarial']['review_notes']=[x for x in r['adversarial']['review_notes'] if not x.startswith('S3 criteria')]+['S3/T opinions are separate subjective annotations. Original answer validity and input exposure require review.']
-d['generation_spec'].update(generator_file=Path(__file__).name,generator_sha256=g.sha(Path(__file__)),generation_method='Fresh baseline-only programmatic templates and random sampling; no prior candidates read.',method_overrides={'Q1':'spacing_noise','Q2':'question_to_instruction_recast'},category_versions={'S1':'S1-irrelevant-v1','S3':'S3-personal-opinion-v1','T':'T-nonauthoritative-v1'})
+   r['adversarial']['review_notes']=[x for x in r['adversarial']['review_notes'] if not x.startswith('S3 criteria')]+['Non-authoritative opinions and hypothetical cases require independent scope review.']
+d['generation_spec'].update(generator_file=Path(__file__).name,generator_sha256=g.sha(Path(__file__)),generation_method='Fresh baseline-only generation. Q1 uniform selection among constructible lexical and spacing methods; Q2 substantive sentence/lexical rewrites without generic prefixes; T3 concrete scenario-specific hypothetical analogies.',method_overrides={},category_versions={'Q1':'eligible_method_sampling-v2','Q2':'substantive_paraphrase-v2','S3':'S3-personal-opinion-v1','T':'T-nonauthoritative-v1'},dependency_hashes={name:g.sha(Path(__file__).parent/name) for name in ['query_rewrite_v2.py','query_sentence_bank.py','analogy_cases_v2.py','regenerate_adbeta.py','generate_adbeta.py']})
 g.DEST.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
 shutil.copy2(g.PROMPT,OUT/g.PROMPT.name)
 receipt=dict(passed=True,structural_candidates=9744,independent_semantic_review='pending',source_sha256=g.sha(g.SOURCE),dataset_sha256=g.sha(g.DEST),prompt_sha256=g.sha(g.PROMPT),seed=g.SEED,run_dir=str(OUT))
 (OUT/'validation.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
-(P/'current-attack-run.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+(P/'corrected-attack-run.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps(receipt,ensure_ascii=False))
